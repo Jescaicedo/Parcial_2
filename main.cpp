@@ -8,6 +8,7 @@ string movusuario(string *);
 void imprimirjuego(Espacio **);
 void reiniciaropciones(string *, int *);
 void jugada(Espacio ** , string *, int *, string, char);
+bool finjuego(Espacio **, string *);
 
 int filas = 8, columnas = 8;
 
@@ -25,25 +26,28 @@ int main()
     matriz[4][4].setSigno(signo2);
     bool juego=true, turno=true;
     string mov;
-    string *opciones = new string[15];
-    int *copciones = new int[15];
+    string *opciones = new string[30];
+    int *copciones = new int[30];
+    opcionesjuego(matriz,signo1, signo2,opciones,copciones);
     while(juego){
         imprimirjuego(matriz);
         if(turno){
             cout<<"Turno de O"<<endl;
-            opcionesjuego(matriz,signo1, signo2,opciones,copciones);
             mov=movusuario(opciones);
             jugada(matriz, opciones, copciones, mov, signo1);
             turno=false;
+            reiniciaropciones(opciones,copciones);
+            opcionesjuego(matriz,signo2, signo1,opciones,copciones);
         }
         else{
             cout<<"Turno de X"<<endl;
-            opcionesjuego(matriz,signo2, signo1,opciones,copciones);
             mov=movusuario(opciones);
             jugada(matriz, opciones, copciones, mov, signo2);
             turno=true;
+            reiniciaropciones(opciones,copciones);
+            opcionesjuego(matriz,signo1, signo2,opciones,copciones);
         }
-        reiniciaropciones(opciones,copciones);
+        juego=finjuego(matriz,opciones);
     }
 
     for (int i = 0; i < filas; i++) {
@@ -68,7 +72,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i+1][j].getSigno()==sc){
                         fila=i+1;
                         columna=j;
-                        while(matriz[fila][columna].getSigno()==sc && fila<filas){
+                        while(matriz[fila][columna].getSigno()==sc && fila+1<filas){
                             fila+=1;
                         }
                         if(matriz[fila][columna].getSigno()=='N'){
@@ -93,7 +97,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i-1][j].getSigno()==sc){
                         fila=i-1;
                         columna=j;
-                        while(matriz[fila][columna].getSigno()==sc && fila>=0){
+                        while(matriz[fila][columna].getSigno()==sc && fila-1>=0){
                             fila-=1;
                         }
                         if(matriz[fila][columna].getSigno()=='N'){
@@ -118,7 +122,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i][j+1].getSigno()==sc){
                         fila=i;
                         columna=j+1;
-                        while(matriz[fila][columna].getSigno()==sc && columna<columnas){
+                        while(matriz[fila][columna].getSigno()==sc && columna+1<columnas){
                             columna+=1;
                         }
                         if(matriz[fila][columna].getSigno()=='N'){
@@ -143,7 +147,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i][j-1].getSigno()==sc){
                         fila=i;
                         columna=j-1;
-                        while(matriz[fila][columna].getSigno()==sc && columna<=columnas){
+                        while(matriz[fila][columna].getSigno()==sc && columna-1>=0){
                             columna-=1;
                         }
                         if(matriz[fila][columna].getSigno()=='N'){
@@ -168,7 +172,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i+1][j+1].getSigno()==sc){
                         fila=i+1;
                         columna=j+1;
-                        while(matriz[fila][columna].getSigno()==sc && fila<filas && columna<columnas){
+                        while(matriz[fila][columna].getSigno()==sc && fila+1<filas && columna+1<columnas){
                             fila+=1;
                             columna+=1;
                         }
@@ -193,7 +197,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i-1][j-1].getSigno()==sc){
                         fila=i-1;
                         columna=j-1;
-                        while(matriz[fila][columna].getSigno()==sc && fila>=0 && columna>=0){
+                        while(matriz[fila][columna].getSigno()==sc && fila-1>=0 && columna-1>=0){
                             fila-=1;
                             columna-=1;
                         }
@@ -218,7 +222,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i-1][j+1].getSigno()==sc){
                         fila=i-1;
                         columna=j+1;
-                        while(matriz[fila][columna].getSigno()==sc && fila>=0 && columna<columnas){
+                        while(matriz[fila][columna].getSigno()==sc && fila-1>=0 && columna+1<columnas){
                             fila-=1;
                             columna+=1;
                         }
@@ -243,7 +247,7 @@ void opcionesjuego(Espacio **matriz, char sj, char sc, string *array, int *carra
                     if(matriz[i+1][j-1].getSigno()==sc){
                         fila=i+1;
                         columna=j-1;
-                        while(matriz[fila][columna].getSigno()==sc && fila<filas && columna>=0){
+                        while(matriz[fila][columna].getSigno()==sc && fila+1<filas && columna-1>=0){
                             fila+=1;
                             columna-=1;
                         }
@@ -375,4 +379,35 @@ void jugada(Espacio **matriz , string *opciones, int *copciones, string mov, cha
         }
         cont+=1;
     }
+}
+
+bool finjuego(Espacio **matriz, string *opciones)
+{
+    int X=0, O=0;
+    bool juego=true;
+    if(opciones[0]==""){
+        imprimirjuego(matriz);
+        juego=false;
+        for(int i=0; i<filas;i++){
+            for(int j=0; j<columnas;j++){
+                if(matriz[i][j].getSigno()=='X'){
+                    X+=1;
+                }
+                else if(matriz[i][j].getSigno()=='O'){
+                    O+=1;
+                }
+            }
+        }
+        cout<<"El juego ha finalizado"<<endl;
+        if(X>O){
+            cout<<"El ganador es X"<<endl;
+        }
+        else if(X<O){
+            cout<<"El ganador es O"<<endl;
+        }
+        else{
+            cout<<"Es un empate"<<endl;
+        }
+    }
+    return juego;
 }
