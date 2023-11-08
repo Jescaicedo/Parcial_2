@@ -7,6 +7,7 @@ void opcionesjuego(Espacio **, char, char, string *, int *);
 string movusuario(string *);
 void imprimirjuego(Espacio **);
 void reiniciaropciones(string *, int *);
+void jugada(Espacio ** , string *, int *, string, char);
 
 int filas = 8, columnas = 8;
 
@@ -32,10 +33,15 @@ int main()
             cout<<"Turno de O"<<endl;
             opcionesjuego(matriz,signo1, signo2,opciones,copciones);
             mov=movusuario(opciones);
+            jugada(matriz, opciones, copciones, mov, signo1);
+            turno=false;
         }
         else{
+            cout<<"Turno de X"<<endl;
             opcionesjuego(matriz,signo2, signo1,opciones,copciones);
             mov=movusuario(opciones);
+            jugada(matriz, opciones, copciones, mov, signo2);
+            turno=true;
         }
         reiniciaropciones(opciones,copciones);
     }
@@ -267,7 +273,6 @@ string movusuario(string *moves)
 {
     string mov;
     char columna, fila;
-    int filanum;
     bool valido=true;
     cout<<"Ingrese el movimiento: ";
     cin>>mov;
@@ -333,5 +338,41 @@ void reiniciaropciones(string *opc, int* copc)
     for(int i=0; i<15;i++){
         opc[i]="";
         copc[i]=0;
+    }
+}
+
+void jugada(Espacio **matriz , string *opciones, int *copciones, string mov, char s)
+{
+    int cont=0, fl, cl, fi, ci;
+    char valor;
+    while(opciones[cont]!="" && cont<15){
+        if(opciones[cont]==mov){
+            fl=copciones[cont];
+            cl=fl%10;
+            fl/=10;
+            fl-=1;
+            cl-=1;
+            valor=mov[0];
+            fi=stoi(string(1, valor));
+            valor=mov[1];
+            ci=stoi(string(1, valor));
+            matriz[fi][ci].setSigno(s);
+            while(fi!=fl || ci!=cl){
+                if(fi<fl){
+                    fi+=1;
+                }
+                else if(fi>fl){
+                    fi-=1;
+                }
+                if(ci<cl){
+                    ci+=1;
+                }
+                else if(ci>cl){
+                    ci-=1;
+                }
+                matriz[fi][ci].setSigno(s);
+            }
+        }
+        cont+=1;
     }
 }
