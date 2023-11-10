@@ -376,7 +376,7 @@ void imprimirjuego(Espacio **matriz)
 
 void reiniciaropciones(string *opc, int* copc)
 {
-    for(int i=0; i<15;i++){
+    for(int i=0; i<30;i++){
         opc[i]="";
         copc[i]=0;
     }
@@ -489,4 +489,5 @@ void imphistorial()
         getline(arch,linea);
         cout<<linea<<endl;
     }
+    arch.close();
 }
